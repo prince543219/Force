@@ -1,11 +1,26 @@
 # force_subscribe.py
 
+# -------- CONFIGURATION --------
+AUTH_CHANNEL = ["@your_channel_username"]  # Replace with your channel usernames or IDs
+
+API_ID = 'your_api_id'           # Replace with your API ID
+API_HASH = 'your_api_hash'       # Replace with your API Hash
+BOT_TOKEN = 'your_bot_token'     # Replace with your Bot Token
+
+# --------- BOT IMPORTS ---------
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
-from config import AUTH_CHANNEL
-#from bot import app
 
+# --------- BOT INSTANCE --------
+app = Client(
+    "force_subscribe_bot",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN
+)
+
+# --------- FORCE SUBSCRIBE LOGIC ---------
 async def is_subscribed(bot, user_id, channels):
     unsubscribed = []
     for ch in channels:
@@ -31,7 +46,7 @@ async def get_join_buttons(bot, unsubscribed, user, start_param="start"):
     ])
     return InlineKeyboardMarkup(buttons)
 
-@Client.on_message(filters.group & ~filters.service)
+@app.on_message(filters.group & ~filters.service)
 async def group_message_handler(bot, message):
     if not AUTH_CHANNEL:
         return
@@ -61,3 +76,8 @@ async def group_message_handler(bot, message):
             quote=True,
             disable_web_page_preview=True
         )
+
+# --------- RUN THE BOT ---------
+if __name__ == "__main__":
+    print("Bot is starting...")
+    app.run()
