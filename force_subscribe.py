@@ -3,10 +3,9 @@
 # -------- CONFIGURATION --------
 AUTH_CHANNEL = ["@your_channel_username"]  # Replace with your channel usernames or IDs
 
-API_ID = 'your_api_id'           # Replace with your API ID
-API_HASH = 'your_api_hash'       # Replace with your API Hash
-BOT_TOKEN = 'your_bot_token'     # Replace with your Bot Token
-
+API_ID = '28716246'
+API_HASH = 'd9277abd08e0277e0a899415916e39b3'
+BOT_TOKEN = '7094072498:AAF7mDbdRRbSpYII7wMDjuh8J_0EAD5bK_U'
 # --------- BOT IMPORTS ---------
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
