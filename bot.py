@@ -8,7 +8,7 @@ BOT_TOKEN = "7094072498:AAF7mDbdRRbSpYII7wMDjuh8J_0EAD5bK_U"
 
 GROUP_ID = -1002079289711  # Your group ID
 CHANNEL_USERNAME = "moviiieeeesss"  # Without @
-WELCOME_IMAGE_URL = "https://example.com/welcome-image.jpg"  # Replace with actual image URL
+WELCOME_IMAGE_URL = "https://files.catbox.moe/3ic0hd.jpg"  # Replace with actual image URL
 
 app = Client("join_to_unmute_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
