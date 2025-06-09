@@ -2,12 +2,12 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
 import asyncio
 
-API_ID = 123456    # Replace with your API ID
-API_HASH = "your_api_hash"
-BOT_TOKEN = "your_bot_token"
+API_ID = 28716246   # Replace with your API ID
+API_HASH = "d9277abd08e0277e0a899415916e39b3"
+BOT_TOKEN = "7094072498:AAF7mDbdRRbSpYII7wMDjuh8J_0EAD5bK_U"
 
-GROUP_ID = -1001234567890  # Your group ID
-CHANNEL_USERNAME = "yourchannelusername"  # Without @
+GROUP_ID = -1002079289711  # Your group ID
+CHANNEL_USERNAME = "moviiieeeesss"  # Without @
 WELCOME_IMAGE_URL = "https://example.com/welcome-image.jpg"  # Replace with actual image URL
 
 app = Client("join_to_unmute_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
