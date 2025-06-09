@@ -1,5 +1,6 @@
 # force_subscribe.py
 
+from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
 from config import AUTH_CHANNEL
@@ -17,64 +18,45 @@ async def is_subscribed(bot, user_id, channels):
             continue
     return unsubscribed
 
-async def enforce_subscription(bot, message, group_mode=False):
-    if not AUTH_CHANNEL:
-        return False  # No restriction
-
-    user_id = message.from_user.id
-    unsubscribed = await is_subscribed(bot, user_id, AUTH_CHANNEL)
-
-    if unsubscribed:
-        if group_mode:
-            # In group: Don't send buttons, just return True to handle deletion and warning in handler
-            return True
-        else:
-            buttons = []
-            for ch in unsubscribed:
-                chat = await bot.get_chat(ch)
-                link = chat.invite_link or await chat.export_invite_link()
-                buttons.append([InlineKeyboardButton(f"🔗 Join {chat.title}", url=link)])
-            
-            bot_username = (await bot.get_me()).username
-            start_param = message.command[1] if hasattr(message, "command") and len(message.command) > 1 else "start"
-            buttons.append([
-                InlineKeyboardButton("♻️ Try Again ♻️", url=f"https://t.me/{bot_username}?start={start_param}")
-            ])
-
-            await message.reply_text(
-                f"👋 Hello {message.from_user.mention},\n\n"
-                "Please join the required channel(s) to use this bot.",
-                reply_markup=InlineKeyboardMarkup(buttons)
-            )
-            return True  # Block access
-    return False  # Allow access
-
-# Group message handler (add this in your main bot file)
-from pyrogram import Client, filters
+async def get_join_buttons(bot, unsubscribed, user, start_param="start"):
+    buttons = []
+    for ch in unsubscribed:
+        chat = await bot.get_chat(ch)
+        link = chat.invite_link or await chat.export_invite_link()
+        buttons.append([InlineKeyboardButton(f"🔗 Join {chat.title}", url=link)])
+    bot_username = (await bot.get_me()).username
+    buttons.append([
+        InlineKeyboardButton("♻️ Verify After Joining ♻️", url=f"https://t.me/{bot_username}?start={start_param}")
+    ])
+    return InlineKeyboardMarkup(buttons)
 
 @Client.on_message(filters.group & ~filters.service)
 async def group_message_handler(bot, message):
-    # Ignore bots
+    if not AUTH_CHANNEL:
+        return
     if message.from_user.is_bot:
         return
 
-    # Only proceed if bot can delete messages
+    # Check if bot is admin with delete permission
     bot_member = await bot.get_chat_member(message.chat.id, (await bot.get_me()).id)
-    if not (bot_member.can_delete_messages):
+    if not bot_member.can_delete_messages:
         return
 
-    blocked = await enforce_subscription(bot, message, group_mode=True)
-    if blocked:
-        # Delete the user's message in the group
+    # Check if user is subscribed
+    unsubscribed = await is_subscribed(bot, message.from_user.id, AUTH_CHANNEL)
+    if unsubscribed:
+        # Delete the user's message
         await message.delete()
-        # Warn in group
+
+        # Prepare join buttons
+        start_param = message.command[1] if hasattr(message, "command") and len(message.command) > 1 else "start"
+        reply_markup = await get_join_buttons(bot, unsubscribed, message.from_user, start_param)
+
+        # Warn in the group with join links
         await message.reply_text(
-            f"{message.from_user.mention}, you must join the required channel(s) to send messages here.",
-            quote=True
+            f"{message.from_user.mention}, you must <b>join the required channel(s)</b> before sending messages here.\n\n"
+            "After joining, click <b>Verify After Joining</b> and try sending your message again.",
+            reply_markup=reply_markup,
+            quote=True,
+            disable_web_page_preview=True
         )
-        # Try to DM the user with join links
-        try:
-            # Call enforce_subscription in PM mode to send buttons
-            await enforce_subscription(bot, message, group_mode=False)
-        except Exception as e:
-            print(f"Failed to DM user: {e}")
