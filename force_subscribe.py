@@ -61,10 +61,15 @@ async def group_message_handler(bot, message):
         if not unsubscribed:
             return  # User is subscribed, allow message
 
-        # Check if bot has rights to delete
+        # Check if bot has permission to delete messages
         bot_member = await bot.get_chat_member(message.chat.id, (await bot.get_me()).id)
-        if not bot_member.can_delete_messages:
-            await message.reply_text("⚠️ I need permission to delete messages to enforce subscription rules.")
+        if bot_member.status not in ["administrator", "creator"]:
+            print("[ERROR] Bot is not an admin in the group.")
+            return
+
+        # Check if admin privileges allow deleting messages
+        if not getattr(bot_member.privileges, "can_delete_messages", False):
+            print("[ERROR] Bot lacks delete message permission.")
             return
 
         # Delete unauthorized message
@@ -84,6 +89,7 @@ async def group_message_handler(bot, message):
         await asyncio.sleep(e.value)
     except Exception as err:
         print(f"[ERROR] {err}")
+
 
 # --------- RUN THE BOT ---------
 if __name__ == "__main__":
