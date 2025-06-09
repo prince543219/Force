@@ -7,7 +7,7 @@ API_HASH = "d9277abd08e0277e0a899415916e39b3"
 BOT_TOKEN = "7094072498:AAF7mDbdRRbSpYII7wMDjuh8J_0EAD5bK_U"
 
 GROUP_ID = -1002079289711
-CHANNEL_USERNAME = "moviiieeeesss"
+CHANNEL_ID = -1002383654865  # Channel ID instead of username
 WELCOME_IMAGE_URL = "https://files.catbox.moe/3ic0hd.jpg"
 
 app = Client("join_to_unmute_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -15,7 +15,7 @@ app = Client("join_to_unmute_bot", api_id=API_ID, api_hash=API_HASH, bot_token=B
 # Check if user is in the channel
 async def is_user_in_channel(client, user_id):
     try:
-        member = await client.get_chat_member(CHANNEL_USERNAME, user_id)
+        member = await client.get_chat_member(CHANNEL_ID, user_id)
         return member.status in ["member", "administrator", "creator"]
     except:
         return False
@@ -37,7 +37,7 @@ async def welcome(client, message):
             )
 
             keyboard = InlineKeyboardMarkup([
-                [InlineKeyboardButton("🔔 Join Channel", url=f"https://t.me/{CHANNEL_USERNAME}")],
+                [InlineKeyboardButton("🔔 Join Channel", url="https://t.me/moviiieeeesss")],  # You must use username or invite link for join button
                 [InlineKeyboardButton("✅ Verify", callback_data=f"verify_{user.id}")]
             ])
 
@@ -107,7 +107,7 @@ async def monitor_messages(client, message):
     try:
         await message.delete()
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🔔 Join Channel", url=f"https://t.me/{CHANNEL_USERNAME}")],
+            [InlineKeyboardButton("🔔 Join Channel", url="https://t.me/moviiieeeesss")],  # Still use username or invite link
             [InlineKeyboardButton("✅ Verify", callback_data=f"verify_{user_id}")]
         ])
         await client.send_photo(
