@@ -87,4 +87,29 @@ async def monitor_messages(client, message):
     except Exception as e:
         print(f"Failed to delete or warn: {e}")
 
+@app.on_message(filters.command("unmute") & filters.group)
+async def unmute_command(client, message):
+    user = message.from_user
+    user_id = user.id
+    chat_id = message.chat.id
+
+    if await is_user_in_channel(client, user_id):
+        await client.restrict_chat_member(
+            chat_id=chat_id,
+            user_id=user_id,
+            permissions=ChatPermissions(
+                can_send_messages=True,
+                can_send_media_messages=True,
+                can_send_polls=True,
+                can_send_other_messages=True,
+                can_add_web_page_previews=True,
+                can_change_info=False,
+                can_invite_users=True,
+                can_pin_messages=False
+            )
+        )
+        await message.reply_text(f"✅ {user.mention()} you have joined the channel and are now unmuted!")
+    else:
+        await message.reply_text("🚫 You need to join the channel first!")
+
 app.run()
