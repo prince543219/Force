@@ -4,7 +4,7 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
 from config import AUTH_CHANNEL
-from Force import app
+from bot import app
 
 async def is_subscribed(bot, user_id, channels):
     unsubscribed = []
