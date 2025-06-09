@@ -9,6 +9,6 @@ id_pattern = re.compile(r'^-100\d+$')  # Only allow Telegram channel IDs
 
 AUTH_CHANNEL = [
     int(ch) if id_pattern.match(ch) else ch
-    for ch in environ.get("AUTH_CHANNEL", "").split()
+    for ch in environ.get("AUTH_CHANNEL", "-1002383654865").split()
 ]
 
