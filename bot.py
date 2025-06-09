@@ -20,6 +20,8 @@ async def is_user_in_channel(client, user_id):
     except:
         return False
 
+# ... [previous code remains unchanged]
+
 @app.on_message(filters.new_chat_members)
 async def welcome(client, message):
     for user in message.new_chat_members:
@@ -40,9 +42,9 @@ async def welcome(client, message):
             reply_markup=keyboard
         )
 
-        await check_join_and_unmute(client, user.id)
+        await check_join_and_unmute(client, user.id, user)
 
-async def check_join_and_unmute(client, user_id):
+async def check_join_and_unmute(client, user_id, user_obj=None):
     for _ in range(20):  # Retry up to 20 times
         if await is_user_in_channel(client, user_id):
             await client.restrict_chat_member(
@@ -59,11 +61,11 @@ async def check_join_and_unmute(client, user_id):
                     can_pin_messages=False
                 )
             )
-            await client.send_message(GROUP_ID, f"✅ <a href='tg://user?id={user_id}'>You</a> joined the channel and are now unmuted!", parse_mode="html")
+            mention = user_obj.mention() if user_obj else f"[User](tg://user?id={user_id})"
+            await client.send_message(GROUP_ID, f"✅ {mention} joined the channel and are now unmuted!")
             return
         await asyncio.sleep(3)
 
-# ✅ Watch all messages in the group
 @app.on_message(filters.group & filters.text)
 async def monitor_messages(client, message):
     user_id = message.from_user.id
@@ -79,9 +81,8 @@ async def monitor_messages(client, message):
         await client.send_photo(
             chat_id=message.chat.id,
             photo=WELCOME_IMAGE_URL,
-            caption=f"🚫 <a href='tg://user?id={user_id}'>You</a> must join the channel to speak in the group!",
+            caption=f"🚫 {message.from_user.mention()} must join the channel to speak in the group!",
             reply_markup=keyboard,
-            parse_mode="html"
         )
     except Exception as e:
         print(f"Failed to delete or warn: {e}")
