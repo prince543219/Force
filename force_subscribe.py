@@ -65,8 +65,16 @@ async def group_message_handler(bot, message):
 
     blocked = await enforce_subscription(bot, message, group_mode=True)
     if blocked:
+        # Delete the user's message in the group
         await message.delete()
+        # Warn in group
         await message.reply_text(
             f"{message.from_user.mention}, you must join the required channel(s) to send messages here.",
             quote=True
         )
+        # Try to DM the user with join links
+        try:
+            # Call enforce_subscription in PM mode to send buttons
+            await enforce_subscription(bot, message, group_mode=False)
+        except Exception as e:
+            print(f"Failed to DM user: {e}")
