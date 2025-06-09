@@ -1,7 +1,7 @@
 # force_subscribe.py
 
 # -------- CONFIGURATION --------
-AUTH_CHANNEL = ["@your_channel_username"]  # Replace with your channel usernames or IDs
+AUTH_CHANNEL = [-1002383654865]  # Replace with your channel usernames or IDs
 
 API_ID = '28716246'
 API_HASH = 'd9277abd08e0277e0a899415916e39b3'
